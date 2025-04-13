@@ -1,0 +1,193 @@
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100vh;
+  background: #e6e6e6;
+}
+
+.app-container {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 100vh;
+}
+
+.character-wrapper {
+  flex-shrink: 0;
+}
+
+.character-preview {
+  position: relative;
+  width: 300px;
+  height: 500px;
+  border: 2px solid black;
+}
+
+.character-preview img {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.options-panel {
+  display: inline-block;
+  flex-grow: 1;
+  max-width: 600px;
+}
+
+.tabs {
+  display: inline-block;
+  text-align: center;
+}
+
+.tab-button {
+  padding: 8px 16px;
+  margin: 2px;
+  border: none;
+  background: #ccc;
+  cursor: pointer;
+  border-radius: 5px;
+  font-size: 14px;
+}
+
+.tab-button.active {
+  background: #333;
+  color: #fff;
+}
+
+.tab-button:hover {
+  background: #999;
+}
+
+.items-list {
+  display: inline-block;
+  gap: 15px;
+  text-align: center;
+}
+
+.item-option {
+  display: inline-block;
+  align-items: center;
+  border: 2px solid black;
+  font-size: 0.6em;
+}
+
+.item-preview {
+  width: 75px;
+  height: auto;
+  object-fit: contain;
+  border: 2px solid transparent;
+}
+
+.style-buttons {
+  display: block;
+  text-align: center;
+  width: inherit;
+}
+
+.style-button {
+  padding: 5px 10px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  border: 1px solid #000;
+}
+
+.style-button.none {
+  background: #b30000;
+  color: #000;
+}
+
+.style-button.line-art {
+  background: #000;
+  color: #fff;
+}
+
+.style-button.white-fill {
+  background: #fff;
+  color: #000;
+  border: 1px solid #000;
+}
+.style-button.grey-fill {
+  background: #ccc;
+  color: #fff;
+}
+
+.style-button.selected {
+  border: 2px solid #00f;
+}
+img[src*="/background/"] {
+  z-index: 1;
+}
+img[src*="/baccessory/"] {
+  z-index: 2;
+}
+img[src*="/hair/"] {
+  z-index: 3;
+}
+img[src*="/body/"] {
+  z-index: 4;
+}
+img[src*="/eye/"] {
+  z-index: 5;
+}
+img[src*="/eyebrow/"] {
+  z-index: 6;
+}
+img[src*="/mouth/"] {
+  z-index: 7;
+}
+img[src*="/nose/"] {
+  z-index: 8;
+}
+img[src*="/bang/"] {
+  z-index: 9;
+}
+img[src*="/sock/"] {
+  z-index: 10;
+}
+img[src*="/glove/"] {
+  z-index: 11;
+}
+img[src*="/shoes/"] {
+  z-index: 12;
+}
+img[src*="/bottom/"] {
+  z-index: 13;
+}
+img[src*="/top/"] {
+  z-index: 14;
+}
+img[src*="/accessory/"] {
+  z-index: 15;
+}
+
+@media (min-width: 768px) {
+  .app-container {
+    flex-direction: row;
+    align-items: flex-start;
+    justify-content: center;
+  }
+  .character-wrapper {
+    margin-right: 20px;
+  }
+}
+
+@media (max-width: 767px) {
+  .app-container {
+    flex-direction: column;
+    align-items: center;
+  }
+  .character-wrapper {
+    margin-bottom: 20px;
+  }
+  .options-panel {
+    width: 100%;
+    max-width: none;
+  }
+}
