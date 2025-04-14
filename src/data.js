@@ -33,6 +33,7 @@ export const items = {
   background: generateItems("background"),
   baccessory: generateItems("baccessory"),
   hair: generateItems("hair"),
+ear: generateItems("ear"),
   body: generateItems("body"),
   eye: generateItems("eye"),
   eyebrow: generateItems("eyebrow"),
