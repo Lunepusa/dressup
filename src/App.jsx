@@ -1,6 +1,6 @@
 import "./styles.css";
 import { useState } from "react";
-import { items } from "./data.js";
+import { items, randomitem } from "./data.js";
 
 export function CharacterPreview({ selectedItems }) {
   const allSelected = [
@@ -48,7 +48,7 @@ export function CategorySelector({ category, items, selected, onChange }) {
           return (
             <div key={item.id} className="item-option">
               <img
-                src={item.variants[0].src} // Default to first variant (usually line art)
+                src={item.variants[3].src} // Default to 4th variant (preview)
                 alt="Coming Soon"
                 className="item-preview"
                 onError={(e) =>

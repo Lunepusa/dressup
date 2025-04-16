@@ -1,4 +1,8 @@
-const maxItems = 5; // Adjust this based on your expected max files
+const maxItems = 6; // Adjust this based on your expected max files
+
+export function randomitem(){
+  math.floor(math.random()*maxitem)+1;
+}
 
 const generateItems = (category) => {
   const items = [];
@@ -11,6 +15,7 @@ const generateItems = (category) => {
         id: i,
         variants: [
           { style: "Line Art", src: lineArtPath },
+        
           {
             style: "White Fill",
             src: `/images/${category}/${category}-${i}-white.png`,
@@ -18,6 +23,10 @@ const generateItems = (category) => {
           {
             style: "Grey Fill",
             src: `/images/${category}/${category}-${i}-grey.png`,
+          },
+          {
+            style: "preview",
+            src: `/images/${category}/${category}-${i}-prev.png`,
           },
         ],
       });
