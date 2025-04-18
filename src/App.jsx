@@ -1,32 +1,19 @@
 import "./styles.css";
 import { useState } from "react";
-import { items, randomitem } from "./data.js";
+import { items, randomitem, categories } from "./data.js";
+
+console.log("Imported items keys:", Object.keys(items));
 
 export function CharacterPreview({ selectedItems }) {
-  const allSelected = [
-    ...selectedItems.background,
-    ...selectedItems.baccessory,
-    ...selectedItems.hair,
-...selectedItems.ear,
-    ...selectedItems.body,
-    ...selectedItems.eye,
-    ...selectedItems.eyebrow,
-    ...selectedItems.mouth,
-    ...selectedItems.nose,
-    ...selectedItems.bang,
-    ...selectedItems.sock,
-    ...selectedItems.glove,
-    ...selectedItems.shoes,
-    ...selectedItems.bottom,
-    ...selectedItems.top,
-    ...selectedItems.accessory,
-  ];
+  const allSelected = categories.flatMap(
+    (category) => selectedItems[category.name] || []
+  );
 
   return (
     <div className="character-preview">
-      {allSelected.map((variant) => (
+      {allSelected.map((variant, index) => (
         <img
-          key={`${variant.itemId}-${variant.style}`}
+          key={`${variant.itemId}-${variant.style}-${index}`}
           src={variant.src}
           alt={`${variant.style} ${variant.itemId}`}
           style={{ position: "absolute" }}
@@ -36,31 +23,61 @@ export function CharacterPreview({ selectedItems }) {
   );
 }
 
-export function CategorySelector({ category, items, selected, onChange }) {
+export function CategorySelector({
+  category,
+  items,
+  selected,
+  onChange,
+  getRandomItem,
+}) {
   if (!items?.length) return <p>No items available.</p>;
 
   return (
-    <div className={`${category}-tab`}>
-      <h3>{category.charAt(0).toUpperCase() + category.slice(1)}</h3>
+    <div className={`${category.name}-tab`}>
+      <div className="util">
+        <h3 style={{ textAlign: "left" }}>
+          {category.name.charAt(0).toUpperCase() + category.name.slice(1)}
+        </h3>
+        <button
+          className="util-button"
+          onClick={() => {
+            console.log(`Clearing category: ${category.name}`);
+            onChange(category.name, null, null, false);
+          }}
+        >
+          Clear
+        </button>
+        <button
+          className="util-button"
+          onClick={() => {
+            const selection = getRandomItem(category.name);
+            onChange(
+              category.name,
+              selection.itemId,
+              { style: selection.style, src: selection.src },
+              true
+            );
+          }}
+        >
+          Random
+        </button>
+      </div>
       <div className="items-list">
         {items.map((item) => {
           const selectedVariant = selected.find((v) => v.itemId === item.id);
           return (
             <div key={item.id} className="item-option">
               <img
-                src={item.variants[3].src} // Default to 4th variant (preview)
-                alt="Coming Soon"
+                src={item.variants[3]?.src}
+                alt="Item Preview"
                 className="item-preview"
-                onError={(e) =>
-                  (e.target.parentElement.style.display = "inline-block")
-                } // Hide if missing
               />
               <div className="style-buttons">
                 <button
                   className={`style-button none ${
                     !selectedVariant ? "selected" : ""
                   }`}
-                  onClick={() => onChange(category, item.id, null)}
+                  onClick={() => onChange(category.name, item.id, null)}
                 ></button>
                 <button
                   className={`style-button line-art ${
@@ -68,7 +85,7 @@ export function CategorySelector({ category, items, selected, onChange }) {
                   }`}
                   onClick={() =>
                     onChange(
-                      category,
+                      category.name,
                       item.id,
                       item.variants.find((v) => v.style === "Line Art") ||
                         item.variants[0]
@@ -81,7 +98,7 @@ export function CategorySelector({ category, items, selected, onChange }) {
                   }`}
                   onClick={() =>
                     onChange(
-                      category,
+                      category.name,
                       item.id,
                       item.variants.find((v) => v.style === "White Fill") ||
                         item.variants[1]
@@ -90,13 +107,13 @@ export function CategorySelector({ category, items, selected, onChange }) {
                 ></button>
                 <button
                   className={`style-button grey-fill ${
-                    selectedVariant?.style === "grey Fill" ? "selected" : ""
+                    selectedVariant?.style === "Grey Fill" ? "selected" : ""
                   }`}
                   onClick={() =>
                     onChange(
-                      category,
+                      category.name,
                       item.id,
-                      item.variants.find((v) => v.style === "grey Fill") ||
+                      item.variants.find((v) => v.style === "Grey Fill") ||
                         item.variants[2]
                     )
                   }
@@ -111,50 +128,84 @@ export function CategorySelector({ category, items, selected, onChange }) {
 }
 
 export default function App() {
-  const [selectedItems, setSelectedItems] = useState({
-    background: [],
-    baccessory: [],
-    hair: [],
-ear: [],
-    body: [],
-    eye: [],
-    eyebrow: [],
-    mouth: [],
-    nose: [],
-    bang: [],
-    sock: [],
-    glove: [],
-    shoes: [],
-    bottom: [],
-    top: [],
-    accessory: [],
-  });
-  const categories = [
-    "background",
-    "baccessory",
-    "hair",
-"ear",
-    "body",
-    "eye",
-    "eyebrow",
-    "mouth",
-    "nose",
-    "bang",
-    "sock",
-    "glove",
-    "shoes",
-    "bottom",
-    "top",
-    "accessory",
-  ];
-  const [activeCategory, setActiveCategory] = useState("body");
-  const handleItemChange = (category, itemId, variant) => {
+  const getRandomItem = (categoryName) => {
+    console.log(`getRandomItem for category: ${categoryName}`);
+    const categoryItems = items[categoryName];
+    if (!categoryItems) {
+      console.warn(`Category not found in items: ${categoryName}`);
+      return { itemId: 0, style: "Line Art", src: "" };
+    }
+    if (categoryItems.length === 0) {
+      console.warn(`No items in category: ${categoryName}`);
+      return { itemId: 0, style: "Line Art", src: "" };
+    }
+    const randomId = randomitem(categoryItems.length);
+    if (randomId < 1 || randomId > categoryItems.length) {
+      console.warn(
+        `Invalid randomId ${randomId} for ${categoryName} (length: ${categoryItems.length})`
+      );
+      return { itemId: 0, style: "Line Art", src: "" };
+    }
+    const randomItemData = categoryItems[randomId - 1];
+    if (!randomItemData) {
+      console.warn(`No item data for ${categoryName} ID: ${randomId}`);
+      return { itemId: 0, style: "Line Art", src: "" };
+    }
+    if (
+      !randomItemData.variants ||
+      !Array.isArray(randomItemData.variants) ||
+      randomItemData.variants.length === 0
+    ) {
+      console.warn(
+        `Invalid variants for ${categoryName} ID: ${randomId}`,
+        randomItemData
+      );
+      return { itemId: 0, style: "Line Art", src: "" };
+    }
+    return {
+      itemId: randomId,
+      style: "Line Art",
+      src: randomItemData.variants[0].src,
+    };
+  };
+
+  const defaultItems = categories.reduce(
+    (acc, category) => ({
+      ...acc,
+      [category.name]: [getRandomItem(category.name)],
+    }),
+    {}
+  );
+
+  const [selectedItems, setSelectedItems] = useState(defaultItems);
+  const [activeCategory, setActiveCategory] = useState(categories[4]);
+
+  const handleItemChange = (
+    categoryName,
+    itemId,
+    variant,
+    isRandom = false
+  ) => {
     setSelectedItems((prev) => {
-      const current = prev[category];
-      const selectedVariant = variant ? { itemId, ...variant } : null;
-      const updated = current.filter((v) => v.itemId !== itemId);
-      if (selectedVariant) updated.push(selectedVariant);
-      return { ...prev, [category]: updated };
+      console.log(
+        `handleItemChange: Before update - ${categoryName}:`,
+        prev[categoryName]
+      );
+      const current = prev[categoryName] || [];
+      let updated;
+      if (itemId === null) {
+        console.log(`handleItemChange: Clearing ${categoryName}`);
+        updated = [];
+      } else if (isRandom) {
+        updated = variant && variant.src ? [{ itemId, ...variant }] : [];
+      } else {
+        const selectedVariant =
+          variant && variant.src ? { itemId, ...variant } : null;
+        updated = current.filter((v) => v.itemId !== itemId);
+        if (selectedVariant) updated.push(selectedVariant);
+      }
+      console.log(`handleItemChange: After update - ${categoryName}:`, updated);
+      return { ...prev, [categoryName]: updated };
     });
   };
 
@@ -167,21 +218,22 @@ ear: [],
         <div className="tabs">
           {categories.map((category) => (
             <button
-              key={category}
+              key={category.name}
               className={`tab-button ${
-                activeCategory === category ? "active" : ""
+                activeCategory.name === category.name ? "active" : ""
               }`}
               onClick={() => setActiveCategory(category)}
             >
-              {category.charAt(0).toUpperCase() + category.slice(1)}
+              {category.name.charAt(0).toUpperCase() + category.name.slice(1)}
             </button>
           ))}
         </div>
         <CategorySelector
           category={activeCategory}
-          items={items[activeCategory]}
-          selected={selectedItems[activeCategory]}
+          items={items[activeCategory.name] || []}
+          selected={selectedItems[activeCategory.name] || []}
           onChange={handleItemChange}
+          getRandomItem={getRandomItem}
         />
       </div>
     </div>
