@@ -16,7 +16,6 @@ body {
 
 .character-wrapper {
   flex-shrink: 0;
-
 }
 
 .character-preview {
@@ -24,6 +23,7 @@ body {
   height: 90vh;
   aspect-ratio: 9/16;
   border: 2px solid black;
+  font-size: 0px;
 }
 
 .character-preview img {
@@ -121,6 +121,13 @@ body {
 
 .style-button.selected {
   border: 2px solid #00f;
+}
+.util {
+  text-align: right;
+}
+.util-button {
+  display: inline-block;
+  width: 75px;
 }
 img[src*="/background/"] {
   z-index: 1;
